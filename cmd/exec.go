@@ -6,6 +6,9 @@ package cmd
 import (
 	"dogo/functions"
 	"fmt"
+	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -13,17 +16,33 @@ import (
 // execCmd represents the exec command
 var execCmd = &cobra.Command{
 	Use:   "exec",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "execute a command in a running container",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("exec called")
+		executeCommand(args)
 	},
-	ValidArgsFunction: functions.ServiceGet,
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		if len(args) != 0 {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+		return functions.GetContainers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+	},
+}
+
+func executeCommand(args []string) {
+	if len(args) < 2 {
+		fmt.Println("not enough arguments supplied, need at least 2")
+		os.Exit(1)
+	}
+
+	command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	err := command.Run()
+	if err != nil {
+		panic(err)
+	}
+	os.Exit(0)
 }
 
 func init() {
