@@ -4,26 +4,31 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"dogo/functions"
-	"fmt"
 
+	"github.com/docker/docker/api/types"
 	"github.com/spf13/cobra"
 )
 
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "remove one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+		remove(args)
 	},
-	ValidArgsFunction: functions.ContainerGet,
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return functions.GetContainers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+	},
+}
+
+func remove(args []string) {
+
+	cli := functions.GetClient()
+	for _, container := range args {
+		cli.ContainerRemove(context.Background(), container, types.ContainerRemoveOptions{})
+	}
 }
 
 func init() {

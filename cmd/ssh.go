@@ -4,6 +4,8 @@ package cmd
 import (
 	"dogo/functions"
 	"fmt"
+	"os"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 )
@@ -11,17 +13,32 @@ import (
 // sshCmd represents the ssh command
 var sshCmd = &cobra.Command{
 	Use:   "ssh",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "connect to a running container",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ssh called")
+		connect(args)
 	},
-	ValidArgsFunction: functions.ContainerGet,
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		if len(args) != 0 {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+		return functions.GetContainers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+	},
+}
+
+func connect(args []string) {
+	if len(args) == 0 {
+		fmt.Println("no container given")
+		os.Exit(1)
+	}
+	containerName := args[0]
+	command := exec.Command("bash", "-c", "docker exec -it "+containerName+" /bin/bash")
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	err := command.Run()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func init() {
