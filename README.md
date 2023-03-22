@@ -10,6 +10,7 @@ Available Commands:
   completion  Generate completion script
   exec        execute a command in a running container
   help        Help about any command
+  list        list all containers & services
   remove      remove one or many containers
   ssh         connect to a running container
   start       start one or many containers
