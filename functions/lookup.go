@@ -17,6 +17,9 @@ func GetContainers(toComplete string, all bool) []string {
 	containerList := GetContainerList(options)
 	containers := make([]string, len(containerList))
 	for _, container := range containerList {
+		if len(container.Names[0][1:]) <= 0 {
+			continue
+		}
 		containers = append(containers, container.Names[0][1:])
 	}
 	return containers
@@ -27,10 +30,21 @@ func GetServices(toComplete string, all bool) []string {
 	containerList := GetContainerList(options)
 	services := make([]string, len(containerList))
 	for _, container := range containerList {
+		if len(container.Image) <= 0 {
+			continue
+		}
 		services = append(services, container.Image)
 		GlobalServices[container.Image] = container.Labels[COMPOSE_CONFIG_FILE_LABEL]
 	}
 	return services
+}
+
+func FetchServiceConfig(serviceName string) string {
+	_, exists := GlobalServices[serviceName]
+	if !exists {
+		generateServiceMap()
+	}
+	return GlobalServices[serviceName]
 }
 
 func GetClient() *client.Client {
@@ -49,4 +63,8 @@ func GetContainerList(options types.ContainerListOptions) []types.Container {
 		panic(err)
 	}
 	return containerList
+}
+
+func generateServiceMap() {
+	GetServices("", true)
 }
