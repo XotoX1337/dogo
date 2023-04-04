@@ -3,9 +3,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import (
-	"dogo/cmd"
-)
+import "github.com/XotoX1337/dogo/cmd"
 
 func main() {
 	cmd.Execute()

@@ -5,8 +5,11 @@ package cmd
 
 import (
 	"context"
-	"dogo/functions"
+	"fmt"
 
+	"github.com/XotoX1337/dogo/log"
+	"github.com/XotoX1337/dogo/lookup"
+	containertypes "github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -18,14 +21,25 @@ var stopCmd = &cobra.Command{
 		stop(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return functions.GetContainers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func stop(args []string) {
-	cli := functions.GetClient()
-	for _, container := range args {
-		cli.ContainerStop(context.Background(), container, nil)
+	for _, argument := range args {
+		containerList := lookup.Search(lookup.Containers("", true), argument)
+		stopContainers(containerList)
+	}
+}
+
+func stopContainers(containers []string) {
+	cli := lookup.Client()
+	for _, container := range containers {
+		log.Info(fmt.Sprintf("stopping %s...", container))
+		err := cli.ContainerStop(context.Background(), container, containertypes.StopOptions{})
+		if err != nil {
+			log.Warn(fmt.Sprintf("could not stop container %s", container))
+		}
 	}
 }
 

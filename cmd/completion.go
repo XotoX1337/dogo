@@ -6,7 +6,9 @@ package cmd
 import (
 	"io"
 	"os"
+	"path/filepath"
 
+	"github.com/XotoX1337/dogo/log"
 	"github.com/spf13/cobra"
 )
 
@@ -43,21 +45,28 @@ var completionCmd = &cobra.Command{
 
 func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 	writeToFile, _ := cmd.Flags().GetBool("file")
-	fileDestination, _ := cmd.Flags().GetString("destination")
+
 	if !writeToFile {
 		return os.Stdout
 	}
 	var writer io.Writer
+
 	switch terminal {
 	case "bash":
+		customDest, _ := cmd.Flags().GetString("destination")
 		homeDir, _ := os.UserHomeDir()
-		destination := homeDir + "/.bash_completion.d/dogo-completion.sh"
-		if fileDestination != "" {
-			destination = fileDestination
+		const filename string = "dogo-completion.sh"
+		dest := filepath.Join(homeDir, filename)
+		if customDest != "" {
+			dest = filepath.Join(homeDir, filename)
 		}
-		file, err := os.OpenFile(destination, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		if _, err := os.Stat(dest); os.IsNotExist(err) {
+			os.MkdirAll(dest, 0644)
+		}
+		file, err := os.OpenFile(dest, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 		if err != nil {
-			panic(err)
+			log.Warn("could not write completion script")
+			log.Fatal(err.Error())
 		}
 		writer = file
 	case "zsh":

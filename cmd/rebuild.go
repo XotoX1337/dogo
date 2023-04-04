@@ -4,13 +4,14 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dogo/functions"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 	"sync"
 
+	"github.com/XotoX1337/dogo/log"
+	"github.com/XotoX1337/dogo/lookup"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +26,7 @@ var rebuildCmd = &cobra.Command{
 		rebuild(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return functions.GetServices(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Services(toComplete, true), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
@@ -34,7 +35,7 @@ func rebuild(args []string) {
 	var serviceMap = map[string][]string{}
 
 	for _, service := range args {
-		config := functions.FetchServiceConfig(service)
+		config := lookup.ServiceConfig(service)
 		_, exists := serviceMap[config]
 		if !exists {
 			serviceMap[config] = []string{}
@@ -60,14 +61,15 @@ func rebuild(args []string) {
 
 func rebuildServices(config string, services []string) {
 
-	fmt.Printf("rebuilding %v...\n", services)
+	log.Info(fmt.Sprintf("rebuilding %v...\n", services))
 	command := exec.Command("bash", "-c", "docker compose -f "+config+" build --quiet "+strings.Join(services, " "))
 	command.Stderr = os.Stderr
 	err := command.Run()
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		log.Fatal(fmt.Sprintf("could not rebuild %v", services))
 	}
 	recreateServices(config, services)
+	// done
 }
 
 func recreateServices(config string, services []string) {
