@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Destination string
-var File bool
+var completionCmdDestinationFlag string
+var completionCmdFileFlag bool
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
@@ -83,8 +83,8 @@ func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 
 func init() {
 	rootCmd.AddCommand(completionCmd)
-	completionCmd.Flags().BoolVarP(&File, "file", "f", false, "write completion to file instead of stdout")
-	completionCmd.Flags().StringVarP(&Destination, "dest", "d", "", "specify file destination, defaults to $HOME/.bash-completion.d/dogo-completion.sh")
+	completionCmd.Flags().BoolVarP(&completionCmdFileFlag, "file", "f", false, "write completion to file instead of stdout")
+	completionCmd.Flags().StringVarP(&completionCmdDestinationFlag, "dest", "d", "", "specify file destination, defaults to $HOME/.bash-completion.d/dogo-completion.sh")
 
 	// Here you will define your flags and configuration settings.
 

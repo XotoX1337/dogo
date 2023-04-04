@@ -10,6 +10,7 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/platform"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +35,11 @@ func executeCommand(args []string) {
 		log.Fatal("not enough arguments supplied, need at least 2")
 	}
 
-	command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
+	//platform := types.Platform{}.Get()
+	p := platform.New()
+
+	command := exec.Command(p.GetShell(), p.GetExec(), "docker exec -it "+strings.Join(args, " "))
+	//command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
