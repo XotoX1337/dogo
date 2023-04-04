@@ -14,11 +14,11 @@ var prefixMap = map[int]string{
 	constants.LOG_LEVEL_FATAL: "FATAL: ",
 }
 
-func Log(level int, message string) {
+func Log(level int, message string, format ...any) {
 	fmt.Printf(
 		"%s %s\n",
 		prefixMap[level],
-		message,
+		fmt.Sprintf(message, format...),
 	)
 
 	if level == constants.LOG_LEVEL_FATAL {
@@ -26,18 +26,19 @@ func Log(level int, message string) {
 	}
 }
 
-func Debug(message string) {
+func Debug(message string, format ...any) {
+
 	Log(constants.LOG_LEVEL_DEBUG, message)
 }
 
-func Info(message string) {
+func Info(message string, format ...any) {
 	Log(constants.LOG_LEVEL_INFO, message)
 }
 
-func Warn(message string) {
+func Warn(message string, format ...any) {
 	Log(constants.LOG_LEVEL_WARN, message)
 }
 
-func Fatal(message string) {
+func Fatal(message string, format ...any) {
 	Log(constants.LOG_LEVEL_FATAL, message)
 }

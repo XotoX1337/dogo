@@ -17,13 +17,20 @@ Usage:
 
 Available Commands:
   completion  Generate completion script
+  create      create all or a specific service from a docker-compose.yml file
   exec        execute a command in a running container
   help        Help about any command
   list        list all containers & services
+  rebuild     rebuild one or many services
   remove      remove one or many containers
-  shell       connect to a running container
+  restart     restart one or many containers
+  shell       use shell of a running container
   start       start one or many containers
   stop        stop one or many containers
+
+Flags:
+  -h, --help     help for dogo
+  -t, --toggle   Help message for toggle
 ```
 ## Examples
     dogo shell yourContainer

@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
@@ -34,10 +33,10 @@ func stop(args []string) {
 func stopContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
-		log.Info(fmt.Sprintf("stopping %s...", container))
+		log.Info("stopping %s...", container)
 		err := cli.ContainerStop(context.Background(), container, nil)
 		if err != nil {
-			log.Warn(fmt.Sprintf("could not stop container %s", container))
+			log.Warn("could not stop container %s", container)
 		}
 	}
 }

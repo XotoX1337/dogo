@@ -2,7 +2,10 @@ package terminal
 
 import (
 	"fmt"
+	"os/exec"
 	"strings"
+
+	"github.com/XotoX1337/dogo/platform"
 )
 
 func Print(title string, content string) {
@@ -12,4 +15,12 @@ func Print(title string, content string) {
 		fmt.Printf("%s\n", line)
 	}
 	fmt.Println("")
+}
+
+func ShellExecute(command string) (string, error) {
+
+	p := platform.New()
+	cmd := exec.Command(p.GetShell(), p.GetExec(), command)
+	output, error := cmd.CombinedOutput()
+	return string(output), error
 }
