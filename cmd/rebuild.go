@@ -6,12 +6,12 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -61,22 +61,18 @@ func rebuild(args []string) {
 
 func rebuildServices(config string, services []string) {
 
-	log.Info(fmt.Sprintf("rebuilding %v...\n", services))
-	command := exec.Command("sh", "-c", "docker compose -f "+config+" build --quiet "+strings.Join(services, " "))
-	command.Stderr = os.Stderr
-	err := command.Run()
+	log.Info("rebuilding %v...\n", services)
+	_, err := terminal.ShellExecute("docker compose -f " + config + " build --quiet " + strings.Join(services, " "))
 	if err != nil {
-		log.Fatal(fmt.Sprintf("could not rebuild %v", services))
+		log.Fatal("could not rebuild %v", services)
 	}
 	recreateServices(config, services)
 	// done
 }
 
 func recreateServices(config string, services []string) {
-	fmt.Printf("recreating %v...\n", services)
-	command := exec.Command("sh", "-c", "docker compose -f "+config+" create "+strings.Join(services, " "))
-	command.Stderr = os.Stderr
-	err := command.Run()
+	log.Info("recreating %v...\n", services)
+	_, err := terminal.ShellExecute("docker compose -f " + config + " create " + strings.Join(services, " "))
 	if err != nil {
 		fmt.Printf("%v", err)
 	}

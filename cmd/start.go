@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
@@ -35,10 +34,10 @@ func start(args []string) {
 func startContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
-		log.Info(fmt.Sprintf("starting %s...", container))
+		log.Info("starting %s...", container)
 		err := cli.ContainerStart(context.Background(), container, types.ContainerStartOptions{})
 		if err != nil {
-			log.Warn(fmt.Sprintf("could not start container %s", container))
+			log.Warn("could not start container %s", container)
 		}
 	}
 }
