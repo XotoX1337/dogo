@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"context"
-	"dogo/functions"
+	"fmt"
 
+	"github.com/XotoX1337/dogo/log"
+	"github.com/XotoX1337/dogo/lookup"
 	"github.com/docker/docker/api/types"
 	"github.com/spf13/cobra"
 )
@@ -19,15 +21,25 @@ var removeCmd = &cobra.Command{
 		remove(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return functions.GetContainers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func remove(args []string) {
+	for _, argument := range args {
+		containerList := lookup.Search(lookup.Containers("", true), argument)
+		removeContainers(containerList)
+	}
+}
 
-	cli := functions.GetClient()
-	for _, container := range args {
-		cli.ContainerRemove(context.Background(), container, types.ContainerRemoveOptions{})
+func removeContainers(containers []string) {
+	cli := lookup.Client()
+	for _, container := range containers {
+		log.Info(fmt.Sprintf("removing %s...", container))
+		err := cli.ContainerRemove(context.Background(), container, types.ContainerRemoveOptions{})
+		if err != nil {
+			log.Warn(fmt.Sprintf("could not remove container %s", container))
+		}
 	}
 }
 

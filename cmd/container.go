@@ -4,8 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dogo/functions"
-
+	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/terminal"
 	"github.com/jedib0t/go-pretty/v6/list"
 	"github.com/spf13/cobra"
 )
@@ -17,13 +17,10 @@ var containerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)
-		for _, container := range functions.GetContainers("", true) {
-			if len(container) > 0 {
-				l.AppendItem(container)
-			}
-
+		for _, container := range lookup.Containers("", true) {
+			l.AppendItem(container)
 		}
-		functions.Print("Container", l.Render())
+		terminal.Print("Container", l.Render())
 	},
 }
 

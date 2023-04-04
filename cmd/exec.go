@@ -4,11 +4,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dogo/functions"
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/XotoX1337/dogo/log"
+	"github.com/XotoX1337/dogo/lookup"
 
 	"github.com/spf13/cobra"
 )
@@ -24,14 +25,13 @@ var execCmd = &cobra.Command{
 		if len(args) != 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		return functions.GetContainers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func executeCommand(args []string) {
 	if len(args) < 2 {
-		fmt.Println("not enough arguments supplied, need at least 2")
-		os.Exit(1)
+		log.Fatal("not enough arguments supplied, need at least 2")
 	}
 
 	command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
@@ -40,7 +40,8 @@ func executeCommand(args []string) {
 	command.Stderr = os.Stderr
 	err := command.Run()
 	if err != nil {
-		panic(err)
+		log.Fatal("there was an error executing the command")
+		log.Fatal(err.Error())
 	}
 	os.Exit(0)
 }
