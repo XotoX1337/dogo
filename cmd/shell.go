@@ -2,18 +2,18 @@
 package cmd
 
 import (
-	"dogo/functions"
 	"fmt"
 	"os"
 	"os/exec"
 
+	"github.com/XotoX1337/dogo/lookup"
 	"github.com/spf13/cobra"
 )
 
-// sshCmd represents the ssh command
-var sshCmd = &cobra.Command{
-	Use:   "ssh",
-	Short: "connect to a running container",
+// shellCmd represents the ssh command
+var shellCmd = &cobra.Command{
+	Use:   "shell",
+	Short: "use shell of a running container",
 	Run: func(cmd *cobra.Command, args []string) {
 		connect(args)
 	},
@@ -21,7 +21,7 @@ var sshCmd = &cobra.Command{
 		if len(args) != 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		return functions.GetContainers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
@@ -42,15 +42,15 @@ func connect(args []string) {
 }
 
 func init() {
-	rootCmd.AddCommand(sshCmd)
+	rootCmd.AddCommand(shellCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// sshCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// shellCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// sshCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// shellCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

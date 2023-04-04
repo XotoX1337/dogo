@@ -4,8 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dogo/functions"
-
+	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/terminal"
 	"github.com/jedib0t/go-pretty/v6/list"
 	"github.com/spf13/cobra"
 )
@@ -17,12 +17,10 @@ var servicesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)
-		for _, service := range functions.GetServices("", true) {
-			if len(service) > 0 {
-				l.AppendItem(service)
-			}
+		for _, service := range lookup.Services("", true) {
+			l.AppendItem(service)
 		}
-		functions.Print("Services", l.Render())
+		terminal.Print("Services", l.Render())
 	},
 }
 

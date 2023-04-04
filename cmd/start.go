@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"context"
-	"dogo/functions"
+	"fmt"
 
+	"github.com/XotoX1337/dogo/log"
+	"github.com/XotoX1337/dogo/lookup"
 	"github.com/docker/docker/api/types"
 	"github.com/spf13/cobra"
 )
@@ -19,14 +21,25 @@ var startCmd = &cobra.Command{
 		start(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return functions.GetContainers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func start(args []string) {
-	cli := functions.GetClient()
-	for _, container := range args {
-		cli.ContainerStart(context.Background(), container, types.ContainerStartOptions{})
+	for _, argument := range args {
+		containerList := lookup.Search(lookup.Containers("", true), argument)
+		startContainers(containerList)
+	}
+}
+
+func startContainers(containers []string) {
+	cli := lookup.Client()
+	for _, container := range containers {
+		log.Info(fmt.Sprintf("starting %s...", container))
+		err := cli.ContainerStart(context.Background(), container, types.ContainerStartOptions{})
+		if err != nil {
+			log.Warn(fmt.Sprintf("could not start container %s", container))
+		}
 	}
 }
 
