@@ -62,7 +62,7 @@ func rebuild(args []string) {
 func rebuildServices(config string, services []string) {
 
 	log.Info(fmt.Sprintf("rebuilding %v...\n", services))
-	command := exec.Command("bash", "-c", "docker compose -f "+config+" build --quiet "+strings.Join(services, " "))
+	command := exec.Command("sh", "-c", "docker compose -f "+config+" build --quiet "+strings.Join(services, " "))
 	command.Stderr = os.Stderr
 	err := command.Run()
 	if err != nil {
@@ -74,7 +74,7 @@ func rebuildServices(config string, services []string) {
 
 func recreateServices(config string, services []string) {
 	fmt.Printf("recreating %v...\n", services)
-	command := exec.Command("bash", "-c", "docker compose -f "+config+" create "+strings.Join(services, " "))
+	command := exec.Command("sh", "-c", "docker compose -f "+config+" create "+strings.Join(services, " "))
 	command.Stderr = os.Stderr
 	err := command.Run()
 	if err != nil {

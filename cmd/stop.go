@@ -9,7 +9,6 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
-	containertypes "github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +35,7 @@ func stopContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
 		log.Info(fmt.Sprintf("stopping %s...", container))
-		err := cli.ContainerStop(context.Background(), container, containertypes.StopOptions{})
+		err := cli.ContainerStop(context.Background(), container, nil)
 		if err != nil {
 			log.Warn(fmt.Sprintf("could not stop container %s", container))
 		}
