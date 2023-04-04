@@ -1,5 +1,5 @@
 icon:
-	rsrc -ico dogo.ico
+	rsrc -ico assets/dogo_cli.ico
 
 build:
 	go mod tidy

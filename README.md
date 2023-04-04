@@ -1,5 +1,8 @@
-# `dogo` 
-docker command line helper with autocomplete written in [Go](https://go.dev/) and [cobra](https://github.com/spf13/cobra)
+![dogo logo](assets/Dogo.png)
+[![Go Reference](https://pkg.go.dev/badge/github.com/XotoX1337/dogo.svg)](https://pkg.go.dev/github.com/XotoX1337/dogo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/XotoX1337/dogo)](https://goreportcard.com/report/github.com/XotoX1337/dogo)
+
+docker (compose) command line helper with autocomplete written in [go](https://go.dev/) and [cobra](https://github.com/spf13/cobra)
 
 ## Install
 
