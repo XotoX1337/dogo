@@ -1,6 +1,12 @@
 # `dogo` 
 docker command line helper with autocomplete written in [Go](https://go.dev/) and [cobra](https://github.com/spf13/cobra)
 
+## Install
+
+```shell
+go install github.com/XotoX1337/dogo@latest
+```
+
 ## Usage 
 ```shell
 Usage:
@@ -12,12 +18,12 @@ Available Commands:
   help        Help about any command
   list        list all containers & services
   remove      remove one or many containers
-  ssh         connect to a running container
+  shell       connect to a running container
   start       start one or many containers
   stop        stop one or many containers
 ```
 ## Examples
-    dogo ssh yourContainer
+    dogo shell yourContainer
     dogo start firstContainer secondContainer ...
 
 ## Completion

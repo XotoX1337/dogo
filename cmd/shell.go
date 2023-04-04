@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// shellCmd represents the ssh command
+// shellCmd represents the shell command
 var shellCmd = &cobra.Command{
 	Use:   "shell",
 	Short: "use shell of a running container",
