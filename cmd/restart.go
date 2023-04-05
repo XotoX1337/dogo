@@ -11,7 +11,7 @@ import (
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
 	Use:   "restart",
-	Short: "restart one or many containers",
+	Short: "Restart one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		stopCmd.Run(cmd, args)
 		startCmd.Run(cmd, args)

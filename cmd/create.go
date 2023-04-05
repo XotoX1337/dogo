@@ -17,7 +17,7 @@ var createCmdFileFlag string
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:                   "create",
-	Short:                 "create all or a specific service from a docker-compose.yml file",
+	Short:                 "Create all or a specific service from a docker-compose.yml file",
 	Args:                  cobra.MatchAll(cobra.MaximumNArgs(1), cobra.OnlyValidArgs),
 	DisableFlagsInUseLine: true,
 	PreRun: func(cmd *cobra.Command, args []string) {

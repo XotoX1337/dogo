@@ -15,7 +15,7 @@ import (
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "remove one or many containers",
+	Short: "Remove one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		remove(args)
 	},

@@ -10,7 +10,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:       "list",
-	Short:     "list all containers & services",
+	Short:     "List all containers & services",
 	Args:      cobra.MatchAll(cobra.OnlyValidArgs),
 	ValidArgs: []string{"all", "container", "services"},
 	Run: func(cmd *cobra.Command, args []string) {

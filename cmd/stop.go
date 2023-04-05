@@ -14,7 +14,7 @@ import (
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
-	Short: "stop one or many containers",
+	Short: "Stop one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		stop(args)
 	},

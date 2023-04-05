@@ -57,7 +57,6 @@ func Client() *client.Client {
 	if err != nil {
 		log.Fatal("could not establish a connection with docker. Is docker installed?")
 	}
-
 	return cli
 }
 
@@ -65,7 +64,7 @@ func ContainerList(options types.ContainerListOptions) []types.Container {
 	cli := Client()
 	containerList, err := cli.ContainerList(context.Background(), options)
 	if err != nil {
-		panic(err)
+		log.Fatal("could not establish a connection with docker. Is docker installed?")
 	}
 	return containerList
 }

@@ -13,7 +13,7 @@ import (
 // servicesCmd represents the services command
 var servicesCmd = &cobra.Command{
 	Use:   "services",
-	Short: "prints all available docker services",
+	Short: "Prints all available docker services",
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)

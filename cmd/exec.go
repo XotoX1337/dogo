@@ -18,7 +18,7 @@ import (
 // execCmd represents the exec command
 var execCmd = &cobra.Command{
 	Use:   "exec",
-	Short: "execute a command in a running container",
+	Short: "Execute a command in a running container",
 	Run: func(cmd *cobra.Command, args []string) {
 		executeCommand(args)
 	},
