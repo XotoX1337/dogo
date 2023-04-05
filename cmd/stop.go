@@ -1,22 +1,20 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 */
 package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
-	containertypes "github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
-	Short: "stop one or many containers",
+	Short: "Stop one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		stop(args)
 	},
@@ -35,10 +33,10 @@ func stop(args []string) {
 func stopContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
-		log.Info(fmt.Sprintf("stopping %s...", container))
-		err := cli.ContainerStop(context.Background(), container, containertypes.StopOptions{})
+		log.Info("stopping %s...", container)
+		err := cli.ContainerStop(context.Background(), container, nil)
 		if err != nil {
-			log.Warn(fmt.Sprintf("could not stop container %s", container))
+			log.Warn("could not stop container %s", container)
 		}
 	}
 }

@@ -1,11 +1,10 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 */
 package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
@@ -16,7 +15,7 @@ import (
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "remove one or many containers",
+	Short: "Remove one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		remove(args)
 	},
@@ -35,10 +34,10 @@ func remove(args []string) {
 func removeContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
-		log.Info(fmt.Sprintf("removing %s...", container))
+		log.Info("removing %s...", container)
 		err := cli.ContainerRemove(context.Background(), container, types.ContainerRemoveOptions{})
 		if err != nil {
-			log.Warn(fmt.Sprintf("could not remove container %s", container))
+			log.Warn("could not remove container %s", container)
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 */
 package cmd
 
@@ -10,6 +10,7 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/platform"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,7 @@ import (
 // execCmd represents the exec command
 var execCmd = &cobra.Command{
 	Use:   "exec",
-	Short: "execute a command in a running container",
+	Short: "Execute a command in a running container",
 	Run: func(cmd *cobra.Command, args []string) {
 		executeCommand(args)
 	},
@@ -34,7 +35,11 @@ func executeCommand(args []string) {
 		log.Fatal("not enough arguments supplied, need at least 2")
 	}
 
-	command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
+	//platform := types.Platform{}.Get()
+	p := platform.New()
+
+	command := exec.Command(p.GetShell(), p.GetExec(), "docker exec -it "+strings.Join(args, " "))
+	//command := exec.Command("bash", "-c", "docker exec -it "+strings.Join(args, " "))
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr

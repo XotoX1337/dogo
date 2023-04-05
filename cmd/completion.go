@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 */
 package cmd
 
@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Destination string
-var File bool
+var completionCmdDestinationFlag string
+var completionCmdFileFlag bool
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
@@ -56,14 +56,15 @@ func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 		customDest, _ := cmd.Flags().GetString("destination")
 		homeDir, _ := os.UserHomeDir()
 		const filename string = "dogo-completion.sh"
-		dest := filepath.Join(homeDir, filename)
+		dest := filepath.Join(homeDir, ".bash_completion.d")
 		if customDest != "" {
-			dest = filepath.Join(homeDir, filename)
+			dest = filepath.Join(customDest)
 		}
 		if _, err := os.Stat(dest); os.IsNotExist(err) {
 			os.MkdirAll(dest, 0644)
 		}
-		file, err := os.OpenFile(dest, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+		abs := filepath.Join(dest, filename)
+		file, err := os.OpenFile(abs, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Warn("could not write completion script")
 			log.Fatal(err.Error())
@@ -82,8 +83,8 @@ func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 
 func init() {
 	rootCmd.AddCommand(completionCmd)
-	completionCmd.Flags().BoolVarP(&File, "file", "f", false, "write completion to file instead of stdout")
-	completionCmd.Flags().StringVarP(&Destination, "dest", "d", "", "specify file destination, defaults to $HOME/.bash-completion.d/dogo-completion.sh")
+	completionCmd.Flags().BoolVarP(&completionCmdFileFlag, "file", "f", false, "write completion to file instead of stdout")
+	completionCmd.Flags().StringVarP(&completionCmdDestinationFlag, "dest", "d", "", "specify file destination, defaults to $HOME/.bash-completion.d/dogo-completion.sh")
 
 	// Here you will define your flags and configuration settings.
 

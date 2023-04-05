@@ -13,7 +13,7 @@ import (
 // containerCmd represents the container command
 var containerCmd = &cobra.Command{
 	Use:   "container",
-	Short: "prints all available docker containers",
+	Short: "Prints all available docker containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)
