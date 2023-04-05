@@ -49,3 +49,6 @@ this will store the completion script in `$HOME/.bash_completion.d/dogo-completi
 
 After that you only need to source this file in your profile
 
+## Credits
+dogo mascot created by [@typomedia](https://github.com/typomedia)
+
