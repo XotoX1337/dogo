@@ -13,7 +13,7 @@ import (
 // shellCmd represents the shell command
 var shellCmd = &cobra.Command{
 	Use:   "shell",
-	Short: "use shell of a running container",
+	Short: "Use shell of a running container",
 	Run: func(cmd *cobra.Command, args []string) {
 		connect(args)
 	},

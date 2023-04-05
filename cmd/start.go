@@ -15,7 +15,7 @@ import (
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "start one or many containers",
+	Short: "Start one or many containers",
 	Run: func(cmd *cobra.Command, args []string) {
 		start(args)
 	},

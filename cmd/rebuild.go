@@ -20,7 +20,7 @@ var Prune bool
 // rebuildCmd represents the rebuild command
 var rebuildCmd = &cobra.Command{
 	Use:   "rebuild",
-	Short: "rebuild one or many services",
+	Short: "Rebuild one or many services",
 	Run: func(cmd *cobra.Command, args []string) {
 		removeDockerConfig()
 		rebuild(args)

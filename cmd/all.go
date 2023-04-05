@@ -10,7 +10,7 @@ import (
 // allCmd represents the all command
 var allCmd = &cobra.Command{
 	Use:   "all",
-	Short: "list all containers and services",
+	Short: "List all containers and services",
 	Run: func(cmd *cobra.Command, args []string) {
 		containerCmd.Run(cmd, args)
 		servicesCmd.Run(cmd, args)

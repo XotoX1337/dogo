@@ -12,7 +12,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "dogo",
-	Short: "docker command line helper",
+	Short: "Docker command line helper",
 	Long:  `docker and docker-compose command line helper with autocomplete`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
