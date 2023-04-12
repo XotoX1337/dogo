@@ -41,24 +41,26 @@ func create(service string, file string) {
 		"docker compose",
 	}
 	if file != "" {
-		path := filepath.Join(file, "docker-compose.yml")
+		path := filepath.Join(file)
+		if !strings.HasSuffix(file, "docker-compose.yml") {
+			path = filepath.Join(file, "docker-compose.yml")
+		}
 		cmdSlice = append(cmdSlice, "-f", path)
 	}
 	cmdSlice = append(cmdSlice, "create")
 	if service != "" {
 		cmdSlice = append(cmdSlice, service)
 	}
-	out, err := terminal.ShellExecute(strings.Join(cmdSlice, " "))
+	err := terminal.ShellExecute(strings.Join(cmdSlice, " "), terminal.ShellExecuteOpts{})
 	if err != nil {
-		log.Warn(out)
+		log.Warn(err.Error())
 	}
-	log.Info(out)
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 
-	createCmd.Flags().StringVarP(&createCmdFileFlag, "file", "f", "", "write completion to file instead of stdout")
+	createCmd.Flags().StringVarP(&createCmdFileFlag, "file", "f", "", "specify docker-compose.yml file, defaults to current directory")
 
 	// Here you will define your flags and configuration settings.
 

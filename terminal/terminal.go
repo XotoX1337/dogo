@@ -2,11 +2,18 @@ package terminal
 
 import (
 	"fmt"
+	"io"
 	"os/exec"
 	"strings"
 
 	"github.com/XotoX1337/dogo/platform"
 )
+
+type ShellExecuteOpts struct {
+	Stdin  io.Reader
+	Stdout io.Writer
+	Stderr io.Writer
+}
 
 func Print(title string, content string) {
 	fmt.Printf("%s:\n", title)
@@ -17,10 +24,23 @@ func Print(title string, content string) {
 	fmt.Println("")
 }
 
-func ShellExecute(command string) (string, error) {
+func ShellExecute(command string, opts ShellExecuteOpts) error {
 
 	p := platform.New()
 	cmd := exec.Command(p.GetShell(), p.GetExec(), command)
-	output, error := cmd.CombinedOutput()
-	return string(output), error
+
+	if opts.Stdout != nil {
+		cmd.Stdout = opts.Stdout
+	} else {
+		cmd.Stdout = opts.Stdout
+	}
+
+	if opts.Stdin != nil {
+		cmd.Stdin = opts.Stdin
+	}
+	if opts.Stderr != nil {
+		cmd.Stderr = opts.Stderr
+	}
+
+	return cmd.Run()
 }
