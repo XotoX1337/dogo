@@ -2,6 +2,7 @@ package lookup
 
 import (
 	"context"
+	"os"
 	"strings"
 
 	"github.com/XotoX1337/dogo/constants"
@@ -23,9 +24,19 @@ func Containers(toComplete string, all bool) []string {
 }
 
 func Search(slice []string, query string) []string {
+
+	if query == "*" {
+		log.Warn("need at least one character for wildcard search")
+		os.Exit(1)
+	}
 	var found []string
 	for _, element := range slice {
-		if strings.HasPrefix(element, query) {
+		if strings.HasSuffix(query, "*") {
+			if strings.HasPrefix(element, strings.TrimSuffix(query, "*")) {
+				found = append(found, element)
+			}
+		}
+		if element == query {
 			found = append(found, element)
 		}
 	}

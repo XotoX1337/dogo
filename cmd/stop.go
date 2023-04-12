@@ -26,6 +26,9 @@ var stopCmd = &cobra.Command{
 func stop(args []string) {
 	for _, argument := range args {
 		containerList := lookup.Search(lookup.Containers("", true), argument)
+		if len(containerList) < 1 {
+			log.Info("no container found for %s", argument)
+		}
 		stopContainers(containerList)
 	}
 }
