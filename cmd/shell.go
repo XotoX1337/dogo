@@ -4,9 +4,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
+	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -31,13 +32,13 @@ func connect(args []string) {
 		os.Exit(1)
 	}
 	containerName := args[0]
-	command := exec.Command("bash", "-c", "docker exec -it "+containerName+" /bin/bash")
-	command.Stdin = os.Stdin
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	err := command.Run()
+	err := terminal.ShellExecute("docker exec -it "+containerName+" /bin/bash", terminal.ShellExecuteOpts{
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	})
 	if err != nil {
-		panic(err)
+		log.Fatal("could not connect to %s!", containerName)
 	}
 }
 
