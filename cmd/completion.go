@@ -4,10 +4,14 @@ Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 package cmd
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 
+	"github.com/XotoX1337/dogo/constants"
 	"github.com/XotoX1337/dogo/log"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +31,7 @@ var completionCmd = &cobra.Command{
 	},
 	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
-	Args:                  cobra.ExactValidArgs(1),
+	Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		writer := getWriter(args[0], cmd)
 		switch args[0] {
@@ -43,42 +47,87 @@ var completionCmd = &cobra.Command{
 	},
 }
 
+func getProfilePath(terminal string) string {
+	var profilePath string
+	homeDir, _ := os.UserHomeDir()
+
+	switch terminal {
+	case "bash", "zsh", "fish":
+		profilePath = filepath.Join(homeDir)
+	case "powershell":
+		profilePath = filepath.Join(homeDir, "Documents", "PowerShell")
+	}
+
+	return profilePath
+}
+
+func getScriptPath(terminal string, cmd *cobra.Command) string {
+
+	var filename string = "dogo-completion"
+	var defaultPath string
+	var scriptPath string
+	profilePath := getProfilePath(terminal)
+	customDest, _ := cmd.Flags().GetString("destination")
+
+	switch terminal {
+	case "bash", "zsh", "fish":
+		defaultPath = filepath.Join(profilePath, ".bash_completion.d")
+		filename += ".sh"
+	case "powershell":
+		defaultPath = filepath.Join(profilePath, "Documents", "PowerShell", "Microsoft.PowerShell_profile.ps1")
+		filename += ".ps1"
+	}
+	scriptPath = defaultPath
+	if customDest != "" {
+		scriptPath = filepath.Join(customDest)
+	}
+	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
+		os.MkdirAll(scriptPath, 0644)
+	}
+	return filepath.Join(scriptPath, filename)
+}
+
 func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 	writeToFile, _ := cmd.Flags().GetBool("file")
 
 	if !writeToFile {
 		return os.Stdout
 	}
-	var writer io.Writer
+	scriptPath := getScriptPath(terminal, cmd)
+	writer, writeError := os.OpenFile(scriptPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if writeError != nil {
+		log.Warn("could not write completion script")
+		log.Fatal(writeError.Error())
+	}
 
-	switch terminal {
-	case "bash":
-		customDest, _ := cmd.Flags().GetString("destination")
-		homeDir, _ := os.UserHomeDir()
-		const filename string = "dogo-completion.sh"
-		dest := filepath.Join(homeDir, ".bash_completion.d")
-		if customDest != "" {
-			dest = filepath.Join(customDest)
-		}
-		if _, err := os.Stat(dest); os.IsNotExist(err) {
-			os.MkdirAll(dest, 0644)
-		}
-		abs := filepath.Join(dest, filename)
-		file, err := os.OpenFile(abs, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Warn("could not write completion script")
-			log.Fatal(err.Error())
-		}
-		writer = file
-	case "zsh":
-		writer = os.Stdout
-	case "fish":
-		writer = os.Stdout
-	case "powershell":
-		writer = os.Stdout
+	appendError := appendToProfile(terminal, scriptPath)
+	if appendError != nil {
+		log.Warn("could not append completion script")
+		log.Fatal(appendError.Error())
 	}
 
 	return writer
+}
+
+func appendToProfile(terminal string, scriptPath string) error {
+	profilePath := getProfilePath(terminal)
+	var err error
+	var profile string
+	if terminal == "powershell" {
+		profile = filepath.Join(profilePath, "Microsoft.PowerShell_profile.ps1")
+	} else {
+		profile = filepath.Join(profilePath, ".bashrc")
+	}
+	profileContent, err := os.ReadFile(profile)
+	r := regexp.MustCompile(constants.PROFILE_PREFIX)
+	if !r.Match(profileContent) {
+		writer, _ := os.OpenFile(profile, os.O_APPEND|os.O_WRONLY, 0644)
+		buf := new(bytes.Buffer)
+		buf.WriteString(fmt.Sprintf("%s\n. %s", constants.PROFILE_PREFIX, scriptPath))
+		_, err = buf.WriteTo(writer)
+	}
+
+	return err
 }
 
 func init() {

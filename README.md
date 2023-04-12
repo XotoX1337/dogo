@@ -36,18 +36,40 @@ Flags:
     dogo shell yourContainer
     dogo start firstContainer secondContainer ...
 
-## Completion
+# Completion
+To generate a completion script run 
+```shell
+dogo completion [bash|zsh|fish|powershell]
+```
+This generates a completion script and prints it to stdout. After that, the script must be saved and loaded according to the environment (Windows, Linux).
 
-To generate a completion file simply run 
+Alternativley you can let `dogo` do all that for you. At the moment the following terminals are supported:
+## Bash
 
 ```shell
 dogo completion bash -f
 ```
+this will generate the completion script and place it by default under `$HOME/.bash_completion.d/dogo-completion.sh` and also add a line to source the file for your profile.
 
+You can change the default path for the completion script with 
+```shell
+dogo completion bash -f -d <path>
+```
 
-this will store the completion script in `$HOME/.bash_completion.d/dogo-completion.sh`.
+## Powershell
 
-After that you only need to source this file in your profile
+```shell
+dogo completion bash -f
+```
+this will generate the completion script and place it by default under `$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`.
+
+If you already have a Powershell profile the completions cript will be added to the end of that file.
+
+You can change the default path for the completion script with 
+```shell
+dogo completion bash -f -d <path>
+```
+
 
 ## Credits
 dogo mascot created by [@typomedia](https://github.com/typomedia)
