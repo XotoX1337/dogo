@@ -6,9 +6,11 @@ docker (compose) command line helper with autocomplete written in [go](https://g
 
 ## Install
 
-```shell
+```go
 go install github.com/XotoX1337/dogo@latest
 ```
+
+Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
 
 ## Usage 
 ```shell
