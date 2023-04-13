@@ -37,6 +37,11 @@ func start(args []string) {
 func startContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
+		info, _ := cli.ContainerInspect(context.Background(), container)
+		if info.State.Running {
+			log.Info("container %s is already running", container)
+			continue
+		}
 		log.Info("starting %s...", container)
 		err := cli.ContainerStart(context.Background(), container, types.ContainerStartOptions{})
 		if err != nil {
