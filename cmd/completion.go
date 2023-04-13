@@ -4,7 +4,6 @@ Copyright © 2022 Frederic Leist <frederic.leist@gmail.com>
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -55,7 +54,7 @@ func getProfilePath(terminal string) string {
 	case "bash", "zsh", "fish":
 		profilePath = filepath.Join(homeDir)
 	case "powershell":
-		profilePath = filepath.Join(homeDir, "Documents", "PowerShell")
+		profilePath = filepath.Join(homeDir, "Documents", "WindowsPowerShell")
 	}
 
 	return profilePath
@@ -74,7 +73,7 @@ func getScriptPath(terminal string, cmd *cobra.Command) string {
 		defaultPath = filepath.Join(profilePath, ".bash_completion.d")
 		filename += ".sh"
 	case "powershell":
-		defaultPath = filepath.Join(profilePath, "Documents", "PowerShell", "Microsoft.PowerShell_profile.ps1")
+		defaultPath = filepath.Join(profilePath)
 		filename += ".ps1"
 	}
 	scriptPath = defaultPath
@@ -121,10 +120,8 @@ func appendToProfile(terminal string, scriptPath string) error {
 	profileContent, err := os.ReadFile(profile)
 	r := regexp.MustCompile(constants.PROFILE_PREFIX)
 	if !r.Match(profileContent) {
-		writer, _ := os.OpenFile(profile, os.O_APPEND|os.O_WRONLY, 0644)
-		buf := new(bytes.Buffer)
-		buf.WriteString(fmt.Sprintf("%s\n. %s", constants.PROFILE_PREFIX, scriptPath))
-		_, err = buf.WriteTo(writer)
+		writer, _ := os.OpenFile(profile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+		_, err = writer.WriteString(fmt.Sprintf("\n\n%s\n. %s", constants.PROFILE_PREFIX, scriptPath))
 	}
 
 	return err
