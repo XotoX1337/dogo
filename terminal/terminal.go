@@ -3,6 +3,7 @@ package terminal
 import (
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -28,11 +29,10 @@ func ShellExecute(command string, opts ShellExecuteOpts) error {
 
 	p := platform.New()
 	cmd := exec.Command(p.GetShell(), p.GetExec(), command)
-
 	if opts.Stdout != nil {
 		cmd.Stdout = opts.Stdout
 	} else {
-		cmd.Stdout = opts.Stdout
+		cmd.Stdout = os.Stdout
 	}
 
 	if opts.Stdin != nil {
