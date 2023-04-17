@@ -13,7 +13,7 @@ go install github.com/XotoX1337/dogo@latest
 Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
 
 ## Usage 
-```shell
+```
 Usage:
   dogo [command]
 
@@ -29,6 +29,7 @@ Available Commands:
   shell       Use shell of a running container
   start       Start one or many containers
   stop        Stop one or many containers
+  version     Show the dogo version information
 
 Flags:
   -h, --help     help for dogo
@@ -40,7 +41,7 @@ Flags:
 
 # Completion
 To generate a completion script run 
-```shell
+```go
 dogo completion [bash|zsh|fish|powershell]
 ```
 This generates a completion script and prints it to stdout. After that, the script must be saved and loaded according to the environment (Windows, Linux).
