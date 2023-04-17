@@ -6,9 +6,11 @@ docker (compose) command line helper with autocomplete written in [go](https://g
 
 ## Install
 
-```shell
+```go
 go install github.com/XotoX1337/dogo@latest
 ```
+
+Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
 
 ## Usage 
 ```shell
@@ -49,7 +51,11 @@ Alternativley you can let `dogo` do all that for you. At the moment the followin
 ```shell
 dogo completion bash -f
 ```
-this will generate the completion script and place it by default under `$HOME/.bash_completion.d/dogo-completion.sh` and also add a line to source the file for your profile.
+this will generate the completion script and place it by default under 
+
+`$HOME/.bash_completion.d/dogo-completion.sh` 
+
+and also add a line to source the file for your profile.
 
 You can change the default path for the completion script with 
 ```shell
@@ -61,9 +67,11 @@ dogo completion bash -f -d <path>
 ```shell
 dogo completion bash -f
 ```
-this will generate the completion script and place it by default under `$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1`.
+this will generate the completion script and place it by default under 
 
-If you already have a Powershell profile the completions cript will be added to the end of that file.
+`$HOME\Documents\WindowsPowerShell\dogo-completion.ps1` 
+
+and also add a line to source the file for your profile.
 
 You can change the default path for the completion script with 
 ```shell
