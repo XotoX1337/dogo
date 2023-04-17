@@ -26,6 +26,9 @@ var stopCmd = &cobra.Command{
 func stop(args []string) {
 	for _, argument := range args {
 		containerList := lookup.Search(lookup.Containers("", true), argument)
+		if len(containerList) < 1 {
+			log.Info("no container found for %s", argument)
+		}
 		stopContainers(containerList)
 	}
 }
@@ -33,6 +36,11 @@ func stop(args []string) {
 func stopContainers(containers []string) {
 	cli := lookup.Client()
 	for _, container := range containers {
+		info, _ := cli.ContainerInspect(context.Background(), container)
+		if !info.State.Running {
+			log.Info("container %s is not running", container)
+			continue
+		}
 		log.Info("stopping %s...", container)
 		err := cli.ContainerStop(context.Background(), container, nil)
 		if err != nil {

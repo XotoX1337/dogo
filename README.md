@@ -6,12 +6,14 @@ docker (compose) command line helper with autocomplete written in [go](https://g
 
 ## Install
 
-```shell
+```go
 go install github.com/XotoX1337/dogo@latest
 ```
 
+Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
+
 ## Usage 
-```shell
+```
 Usage:
   dogo [command]
 
@@ -27,6 +29,7 @@ Available Commands:
   shell       Use shell of a running container
   start       Start one or many containers
   stop        Stop one or many containers
+  version     Show the dogo version information
 
 Flags:
   -h, --help     help for dogo
@@ -36,18 +39,46 @@ Flags:
     dogo shell yourContainer
     dogo start firstContainer secondContainer ...
 
-## Completion
+# Completion
+To generate a completion script run 
+```go
+dogo completion [bash|zsh|fish|powershell]
+```
+This generates a completion script and prints it to stdout. After that, the script must be saved and loaded according to the environment (Windows, Linux).
 
-To generate a completion file simply run 
+Alternativley you can let `dogo` do all that for you. At the moment the following terminals are supported:
+## Bash
 
 ```shell
 dogo completion bash -f
 ```
+this will generate the completion script and place it by default under 
 
+`$HOME/.bash_completion.d/dogo-completion.sh` 
 
-this will store the completion script in `$HOME/.bash_completion.d/dogo-completion.sh`.
+and also add a line to source the file for your profile.
 
-After that you only need to source this file in your profile
+You can change the default path for the completion script with 
+```shell
+dogo completion bash -f -d <path>
+```
+
+## Powershell
+
+```shell
+dogo completion bash -f
+```
+this will generate the completion script and place it by default under 
+
+`$HOME\Documents\WindowsPowerShell\dogo-completion.ps1` 
+
+and also add a line to source the file for your profile.
+
+You can change the default path for the completion script with 
+```shell
+dogo completion bash -f -d <path>
+```
+
 
 ## Credits
 dogo mascot created by [@typomedia](https://github.com/typomedia)

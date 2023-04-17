@@ -2,6 +2,7 @@ package lookup
 
 import (
 	"context"
+	"os"
 	"strings"
 
 	"github.com/XotoX1337/dogo/constants"
@@ -10,7 +11,22 @@ import (
 	"github.com/docker/docker/client"
 )
 
-var GlobalServices = map[string]string{}
+type Service struct {
+	Service   string
+	Container string
+	Image     string
+}
+type ConfigDetails struct {
+	Ready bool
+
+	Services          []string
+	Containers        []string
+	Images            []string
+	ImageContainerMap []map[string]string
+	Config            string
+}
+
+var ServicesMap = map[string]ConfigDetails{}
 
 func Containers(toComplete string, all bool) []string {
 	options := types.ContainerListOptions{All: all}
@@ -23,9 +39,19 @@ func Containers(toComplete string, all bool) []string {
 }
 
 func Search(slice []string, query string) []string {
+
+	if query == "*" {
+		log.Warn("need at least one character for wildcard search")
+		os.Exit(1)
+	}
 	var found []string
 	for _, element := range slice {
-		if strings.HasPrefix(element, query) {
+		if strings.HasSuffix(query, "*") {
+			if strings.HasPrefix(element, strings.TrimSuffix(query, "*")) {
+				found = append(found, element)
+			}
+		}
+		if element == query {
 			found = append(found, element)
 		}
 	}
@@ -38,18 +64,8 @@ func Services(toComplete string, all bool) []string {
 	var services []string
 	for _, container := range containerList {
 		services = append(services, container.Image)
-		GlobalServices[container.Image] = container.Labels[constants.COMPOSE_CONFIG_FILE_LABEL]
-
 	}
 	return services
-}
-
-func ServiceConfig(serviceName string) string {
-	_, exists := GlobalServices[serviceName]
-	if !exists {
-		generateServiceMap()
-	}
-	return GlobalServices[serviceName]
 }
 
 func Client() *client.Client {
@@ -69,6 +85,18 @@ func ContainerList(options types.ContainerListOptions) []types.Container {
 	return containerList
 }
 
-func generateServiceMap() {
-	Services("", true)
+func GenerateServiceMap() {
+	containerList := ContainerList(types.ContainerListOptions{All: true})
+	for _, container := range containerList {
+		index := container.Labels[constants.COMPOSE_CONFIG_FILE_LABEL]
+		ServicesMap[index] = ConfigDetails{
+			Ready:             true,
+			Services:          append(ServicesMap[index].Services, container.Labels[constants.COMPOSE_SERVICE_LABEL]),
+			Images:            append(ServicesMap[index].Images, container.Image),
+			Containers:        append(ServicesMap[index].Containers, container.Names[0][1:]),
+			ImageContainerMap: append(ServicesMap[index].ImageContainerMap, map[string]string{container.Image: container.Names[0][1:]}),
+			Config:            index,
+		}
+
+	}
 }
