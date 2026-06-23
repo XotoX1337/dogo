@@ -8,6 +8,7 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
+	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -19,13 +20,13 @@ var stopCmd = &cobra.Command{
 		stop(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func stop(args []string) {
 	for _, argument := range args {
-		containerList := lookup.Search(lookup.Containers("", true), argument)
+		containerList := lookup.Search(lookup.Containers(true), argument)
 		if len(containerList) < 1 {
 			log.Info("no container found for %s", argument)
 		}
@@ -35,16 +36,21 @@ func stop(args []string) {
 
 func stopContainers(containers []string) {
 	cli := lookup.Client()
-	for _, container := range containers {
-		info, _ := cli.ContainerInspect(context.Background(), container)
-		if !info.State.Running {
-			log.Info("container %s is not running", container)
+	defer cli.Close()
+	for _, c := range containers {
+		info, err := cli.ContainerInspect(context.Background(), c)
+		if err != nil {
+			log.Warn("could not inspect container %s: %s", c, err)
 			continue
 		}
-		log.Info("stopping %s...", container)
-		err := cli.ContainerStop(context.Background(), container, nil)
+		if !info.State.Running {
+			log.Info("container %s is not running", c)
+			continue
+		}
+		log.Info("stopping %s...", c)
+		err = cli.ContainerStop(context.Background(), c, container.StopOptions{})
 		if err != nil {
-			log.Warn("could not stop container %s", container)
+			log.Warn("could not stop container %s", c)
 		}
 	}
 }
