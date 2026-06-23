@@ -4,6 +4,10 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/XotoX1337/dogo/constants"
+	"github.com/XotoX1337/dogo/lookup"
+	"github.com/XotoX1337/dogo/terminal"
+	"github.com/docker/docker/api/types"
 	"github.com/spf13/cobra"
 )
 
@@ -12,8 +16,21 @@ var allCmd = &cobra.Command{
 	Use:   "all",
 	Short: "List all containers and services",
 	Run: func(cmd *cobra.Command, args []string) {
-		containerCmd.Run(cmd, args)
-		servicesCmd.Run(cmd, args)
+		var rows [][]string
+		for _, container := range lookup.ContainerList(types.ContainerListOptions{All: true}) {
+			service := container.Labels[constants.COMPOSE_SERVICE_LABEL]
+			if service == "" {
+				service = "-"
+			}
+			rows = append(rows, []string{
+				service,
+				container.Names[0][1:],
+				container.Image,
+				container.State,
+				container.Status,
+			})
+		}
+		terminal.PrintTable("Containers & Services", []string{"Service", "Container", "Image", "State", "Status"}, rows)
 	},
 }
 

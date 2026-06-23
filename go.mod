@@ -1,13 +1,11 @@
 module github.com/XotoX1337/dogo
 
-go 1.24.0
-
-toolchain go1.24.6
+go 1.23.0
 
 require (
-	github.com/docker/docker v28.5.2+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.7.1
-	github.com/spf13/cobra v1.10.1
+	github.com/docker/docker v20.10.24+incompatible
+	github.com/jedib0t/go-pretty/v6 v6.4.6
+	github.com/spf13/cobra v1.6.1
 )
 
 require (
@@ -32,16 +30,13 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/spf13/pflag v1.0.10 // indirect
-	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.63.0 // indirect
-	go.opentelemetry.io/otel v1.38.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.38.0 // indirect
-	go.opentelemetry.io/otel/metric v1.38.0 // indirect
-	go.opentelemetry.io/otel/trace v1.38.0 // indirect
-	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/sirupsen/logrus v1.7.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/testify v1.8.1 // indirect
+	golang.org/x/mod v0.9.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	gotest.tools/v3 v3.4.0 // indirect
 )

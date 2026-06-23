@@ -6,7 +6,7 @@ package cmd
 import (
 	"github.com/XotoX1337/dogo/lookup"
 	"github.com/XotoX1337/dogo/terminal"
-	"github.com/jedib0t/go-pretty/v6/list"
+	"github.com/docker/docker/api/types"
 	"github.com/spf13/cobra"
 )
 
@@ -15,12 +15,16 @@ var containerCmd = &cobra.Command{
 	Use:   "container",
 	Short: "Prints all available docker containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		l := list.NewWriter()
-		l.SetStyle(list.StyleBulletCircle)
-		for _, container := range lookup.Containers(true) {
-			l.AppendItem(container)
+		var rows [][]string
+		for _, container := range lookup.ContainerList(types.ContainerListOptions{All: true}) {
+			rows = append(rows, []string{
+				container.Names[0][1:],
+				container.Image,
+				container.State,
+				container.Status,
+			})
 		}
-		terminal.Print("Container", l.Render())
+		terminal.PrintTable("Container", []string{"Name", "Image", "State", "Status"}, rows)
 	},
 }
 
