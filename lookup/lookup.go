@@ -44,18 +44,27 @@ func Search(slice []string, query string) []string {
 		log.Warn("need at least one character for wildcard search")
 		os.Exit(1)
 	}
-	var found []string
+	if query == "" {
+		return nil
+	}
+	// a trailing "*" is still accepted as an explicit wildcard, but is no
+	// longer required: an exact name match always wins, and when none is
+	// found we fall back to prefix matching, so "infra_" resolves every
+	// container/service starting with "infra_"
+	prefix := strings.TrimSuffix(query, "*")
+	var exact, partial []string
 	for _, element := range slice {
-		if strings.HasSuffix(query, "*") {
-			if strings.HasPrefix(element, strings.TrimSuffix(query, "*")) {
-				found = append(found, element)
-			}
-		}
 		if element == query {
-			found = append(found, element)
+			exact = append(exact, element)
+		}
+		if strings.HasPrefix(element, prefix) {
+			partial = append(partial, element)
 		}
 	}
-	return found
+	if len(exact) > 0 {
+		return exact
+	}
+	return partial
 }
 func Services(toComplete string, all bool) []string {
 	options := types.ContainerListOptions{All: all}
