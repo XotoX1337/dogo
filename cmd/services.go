@@ -17,7 +17,7 @@ var servicesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)
-		for _, service := range lookup.Services("", true) {
+		for _, service := range lookup.Services() {
 			l.AppendItem(service)
 		}
 		terminal.Print("Services", l.Render())

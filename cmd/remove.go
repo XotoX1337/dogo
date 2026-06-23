@@ -8,7 +8,7 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -20,13 +20,13 @@ var removeCmd = &cobra.Command{
 		remove(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return lookup.Containers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(true), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func remove(args []string) {
 	for _, argument := range args {
-		containerList := lookup.Search(lookup.Containers("", true), argument)
+		containerList := lookup.Search(lookup.Containers(true), argument)
 		if len(containerList) < 1 {
 			log.Info("no container found for %s", argument)
 		}
@@ -36,11 +36,12 @@ func remove(args []string) {
 
 func removeContainers(containers []string) {
 	cli := lookup.Client()
-	for _, container := range containers {
-		log.Info("removing %s...", container)
-		err := cli.ContainerRemove(context.Background(), container, types.ContainerRemoveOptions{})
+	defer cli.Close()
+	for _, c := range containers {
+		log.Info("removing %s...", c)
+		err := cli.ContainerRemove(context.Background(), c, container.RemoveOptions{})
 		if err != nil {
-			log.Warn("could not remove container %s", container)
+			log.Warn("could not remove container %s", c)
 		}
 	}
 }

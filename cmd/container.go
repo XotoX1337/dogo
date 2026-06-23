@@ -17,7 +17,7 @@ var containerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		l := list.NewWriter()
 		l.SetStyle(list.StyleBulletCircle)
-		for _, container := range lookup.Containers("", true) {
+		for _, container := range lookup.Containers(true) {
 			l.AppendItem(container)
 		}
 		terminal.Print("Container", l.Render())

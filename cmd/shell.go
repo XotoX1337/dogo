@@ -22,7 +22,7 @@ var shellCmd = &cobra.Command{
 		if len(args) != 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 

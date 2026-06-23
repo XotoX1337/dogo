@@ -10,7 +10,7 @@ docker (compose) command line helper with autocomplete written in [go](https://g
 go install github.com/XotoX1337/dogo@latest
 ```
 
-Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
+Alternatively you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
 
 ## Usage 
 ```
@@ -46,7 +46,7 @@ dogo completion [bash|zsh|fish|powershell]
 ```
 This generates a completion script and prints it to stdout. After that, the script must be saved and loaded according to the environment (Windows, Linux).
 
-Alternativley you can let `dogo` do all that for you. At the moment the following terminals are supported:
+Alternatively you can let `dogo` do all that for you. At the moment the following terminals are supported:
 ## Bash
 
 ```shell

@@ -96,13 +96,13 @@ func getWriter(terminal string, cmd *cobra.Command) io.Writer {
 	writer, writeError := os.OpenFile(scriptPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if writeError != nil {
 		log.Warn("could not write completion script")
-		log.Fatal(writeError.Error())
+		log.Fatal("%s", writeError)
 	}
 
 	appendError := appendToProfile(terminal, scriptPath)
 	if appendError != nil {
 		log.Warn("could not append completion script")
-		log.Fatal(appendError.Error())
+		log.Fatal("%s", appendError)
 	}
 
 	return writer

@@ -25,7 +25,7 @@ var execCmd = &cobra.Command{
 		if len(args) != 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
@@ -40,8 +40,7 @@ func executeCommand(args []string) {
 		Stderr: os.Stderr,
 	})
 	if err != nil {
-		log.Fatal("there was an error executing the command")
-		log.Fatal(err.Error())
+		log.Fatal("there was an error executing the command: %s", err)
 	}
 	os.Exit(0)
 }
