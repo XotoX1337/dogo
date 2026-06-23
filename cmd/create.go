@@ -22,7 +22,7 @@ var createCmd = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			cmd.MarkFlagRequired("file")
+			_ = cmd.MarkFlagRequired("file")
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {

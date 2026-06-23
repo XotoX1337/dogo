@@ -25,7 +25,7 @@ var completionCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		file, _ := cmd.Flags().GetString("dest")
 		if file != "" {
-			cmd.MarkFlagRequired("file")
+			_ = cmd.MarkFlagRequired("file")
 		}
 	},
 	DisableFlagsInUseLine: true,
@@ -33,15 +33,19 @@ var completionCmd = &cobra.Command{
 	Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		writer := getWriter(args[0], cmd)
+		var err error
 		switch args[0] {
 		case "bash":
-			cmd.Root().GenBashCompletion(writer)
+			err = cmd.Root().GenBashCompletion(writer)
 		case "zsh":
-			cmd.Root().GenZshCompletion(writer)
+			err = cmd.Root().GenZshCompletion(writer)
 		case "fish":
-			cmd.Root().GenFishCompletion(writer, true)
+			err = cmd.Root().GenFishCompletion(writer, true)
 		case "powershell":
-			cmd.Root().GenPowerShellCompletionWithDesc(writer)
+			err = cmd.Root().GenPowerShellCompletionWithDesc(writer)
+		}
+		if err != nil {
+			log.Fatal("could not generate completion script: %s", err.Error())
 		}
 	},
 }
@@ -81,7 +85,9 @@ func getScriptPath(terminal string, cmd *cobra.Command) string {
 		scriptPath = filepath.Join(customDest)
 	}
 	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
-		os.MkdirAll(scriptPath, 0644)
+		if err := os.MkdirAll(scriptPath, 0755); err != nil {
+			log.Warn("could not create directory %s", scriptPath)
+		}
 	}
 	return filepath.Join(scriptPath, filename)
 }
