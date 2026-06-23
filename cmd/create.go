@@ -53,7 +53,7 @@ func create(service string, file string) {
 	}
 	err := terminal.ShellExecute(strings.Join(cmdSlice, " "), terminal.ShellExecuteOpts{})
 	if err != nil {
-		log.Warn(err.Error())
+		log.Warn("%s", err)
 	}
 }
 

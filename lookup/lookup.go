@@ -7,7 +7,7 @@ import (
 
 	"github.com/XotoX1337/dogo/constants"
 	"github.com/XotoX1337/dogo/log"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
@@ -28,12 +28,11 @@ type ConfigDetails struct {
 
 var ServicesMap = map[string]ConfigDetails{}
 
-func Containers(toComplete string, all bool) []string {
-	options := types.ContainerListOptions{All: all}
-	containerList := ContainerList(options)
+func Containers(all bool) []string {
+	containerList := ContainerList(container.ListOptions{All: all})
 	var containers []string
-	for _, container := range containerList {
-		containers = append(containers, container.Names[0][1:])
+	for _, c := range containerList {
+		containers = append(containers, c.Names[0][1:])
 	}
 	return containers
 }
@@ -66,26 +65,24 @@ func Search(slice []string, query string) []string {
 	}
 	return partial
 }
-func Services(toComplete string, all bool) []string {
-	options := types.ContainerListOptions{All: all}
-	//flag all
-	containerList := ContainerList(options)
+func Services() []string {
+	containerList := ContainerList(container.ListOptions{All: true})
 	var services []string
-	for _, container := range containerList {
-		services = append(services, container.Image)
+	for _, c := range containerList {
+		services = append(services, c.Image)
 	}
 	return services
 }
 
 func Client() *client.Client {
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		log.Fatal("could not establish a connection with docker. Is docker installed?")
 	}
 	return cli
 }
 
-func ContainerList(options types.ContainerListOptions) []types.Container {
+func ContainerList(options container.ListOptions) []container.Summary {
 	cli := Client()
 	containerList, err := cli.ContainerList(context.Background(), options)
 	if err != nil {
@@ -95,15 +92,15 @@ func ContainerList(options types.ContainerListOptions) []types.Container {
 }
 
 func GenerateServiceMap() {
-	containerList := ContainerList(types.ContainerListOptions{All: true})
-	for _, container := range containerList {
-		index := container.Labels[constants.COMPOSE_CONFIG_FILE_LABEL]
+	containerList := ContainerList(container.ListOptions{All: true})
+	for _, c := range containerList {
+		index := c.Labels[constants.COMPOSE_CONFIG_FILE_LABEL]
 		ServicesMap[index] = ConfigDetails{
 			Ready:             true,
-			Services:          append(ServicesMap[index].Services, container.Labels[constants.COMPOSE_SERVICE_LABEL]),
-			Images:            append(ServicesMap[index].Images, container.Image),
-			Containers:        append(ServicesMap[index].Containers, container.Names[0][1:]),
-			ImageContainerMap: append(ServicesMap[index].ImageContainerMap, map[string]string{container.Image: container.Names[0][1:]}),
+			Services:          append(ServicesMap[index].Services, c.Labels[constants.COMPOSE_SERVICE_LABEL]),
+			Images:            append(ServicesMap[index].Images, c.Image),
+			Containers:        append(ServicesMap[index].Containers, c.Names[0][1:]),
+			ImageContainerMap: append(ServicesMap[index].ImageContainerMap, map[string]string{c.Image: c.Names[0][1:]}),
 			Config:            index,
 		}
 

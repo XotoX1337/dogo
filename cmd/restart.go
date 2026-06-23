@@ -17,7 +17,7 @@ var restartCmd = &cobra.Command{
 		startCmd.Run(cmd, args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return lookup.Containers(toComplete, false), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(false), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 

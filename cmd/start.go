@@ -8,7 +8,7 @@ import (
 
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -20,13 +20,13 @@ var startCmd = &cobra.Command{
 		start(args)
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return lookup.Containers(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Containers(true), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
 func start(args []string) {
 	for _, argument := range args {
-		containerList := lookup.Search(lookup.Containers("", true), argument)
+		containerList := lookup.Search(lookup.Containers(true), argument)
 		if len(containerList) < 1 {
 			log.Info("no container found for %s", argument)
 		}
@@ -36,16 +36,21 @@ func start(args []string) {
 
 func startContainers(containers []string) {
 	cli := lookup.Client()
-	for _, container := range containers {
-		info, _ := cli.ContainerInspect(context.Background(), container)
-		if info.State.Running {
-			log.Info("container %s is already running", container)
+	defer cli.Close()
+	for _, c := range containers {
+		info, err := cli.ContainerInspect(context.Background(), c)
+		if err != nil {
+			log.Warn("could not inspect container %s: %s", c, err)
 			continue
 		}
-		log.Info("starting %s...", container)
-		err := cli.ContainerStart(context.Background(), container, types.ContainerStartOptions{})
+		if info.State.Running {
+			log.Info("container %s is already running", c)
+			continue
+		}
+		log.Info("starting %s...", c)
+		err = cli.ContainerStart(context.Background(), c, container.StartOptions{})
 		if err != nil {
-			log.Warn("could not start container %s", container)
+			log.Warn("could not start container %s", c)
 		}
 	}
 }

@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
@@ -13,7 +14,7 @@ import (
 	"github.com/XotoX1337/dogo/log"
 	"github.com/XotoX1337/dogo/lookup"
 	"github.com/XotoX1337/dogo/terminal"
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +54,7 @@ var rebuildCmd = &cobra.Command{
 		wg.Wait()
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return lookup.Services(toComplete, true), cobra.ShellCompDirectiveNoFileComp
+		return lookup.Services(), cobra.ShellCompDirectiveNoFileComp
 	},
 }
 
@@ -74,22 +75,29 @@ func recreate(config string, images []string, services []string) {
 }
 
 func removeDockerConfig() {
-	homeDir, _ := os.UserHomeDir()
-	os.Remove(homeDir + "/.docker/config.json")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Warn("could not determine home directory, skipping docker config cleanup: %s", err)
+		return
+	}
+	configPath := filepath.Join(homeDir, ".docker", "config.json")
+	if err := os.Remove(configPath); err != nil && !os.IsNotExist(err) {
+		log.Warn("could not remove %s: %s", configPath, err)
+	}
 }
 
 func loadConfigs() {
-	containerList := lookup.ContainerList(types.ContainerListOptions{All: true})
+	containerList := lookup.ContainerList(container.ListOptions{All: true})
 	for _, service := range services {
-		for _, container := range containerList {
-			if container.Image != service {
+		for _, c := range containerList {
+			if c.Image != service {
 				continue
 			}
 
-			index := convertWslPath(container.Labels[constants.COMPOSE_CONFIG_FILE_LABEL])
-			serviceName := container.Labels[constants.COMPOSE_SERVICE_LABEL]
-			containerName := container.Names[0][1:]
-			imageName := container.Image
+			index := convertWslPath(c.Labels[constants.COMPOSE_CONFIG_FILE_LABEL])
+			serviceName := c.Labels[constants.COMPOSE_SERVICE_LABEL]
+			containerName := c.Names[0][1:]
+			imageName := c.Image
 			configs[index] = configDetails{
 				services:   append(configs[index].services, serviceName),
 				containers: append(configs[index].containers, containerName),
@@ -111,7 +119,7 @@ func convertWslPath(path string) string {
 }
 
 func loadServices(args []string) {
-	serviceList := lookup.Services("", true)
+	serviceList := lookup.Services()
 	for _, arg := range args {
 		services = append(services, lookup.Search(serviceList, arg)...)
 	}
