@@ -10,7 +10,7 @@ docker (compose) command line helper with autocomplete written in [go](https://g
 go install github.com/XotoX1337/dogo@latest
 ```
 
-Alternativley you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
+Alternatively you can download the binary of the latest [release](https://github.com/XotoX1337/dogo/releases)
 
 ## Usage 
 ```
@@ -23,6 +23,7 @@ Available Commands:
   exec        Execute a command in a running container
   help        Help about any command
   list        List all containers & services
+  logs        Show (and follow) the logs of one or many containers
   rebuild     Rebuild one or many services
   remove      Remove one or many containers
   restart     Restart one or many containers
@@ -38,6 +39,9 @@ Flags:
 ## Examples
     dogo shell yourContainer
     dogo start firstContainer secondContainer ...
+    dogo logs yourContainer            # follow the logs (tail -f)
+    dogo logs yourContainer -f=false   # print the logs once and exit
+    dogo logs yourContainer -n 50      # show the last 50 lines, then follow
 
 # Completion
 To generate a completion script run 
@@ -46,7 +50,7 @@ dogo completion [bash|zsh|fish|powershell]
 ```
 This generates a completion script and prints it to stdout. After that, the script must be saved and loaded according to the environment (Windows, Linux).
 
-Alternativley you can let `dogo` do all that for you. At the moment the following terminals are supported:
+Alternatively you can let `dogo` do all that for you. At the moment the following terminals are supported:
 ## Bash
 
 ```shell
